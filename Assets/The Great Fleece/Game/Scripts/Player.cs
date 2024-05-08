@@ -6,11 +6,13 @@ using UnityEngine.AI;
 public class Player : MonoBehaviour
 {
     private NavMeshAgent _agent;
+    private Animator _animator;
 
     // Start is called before the first frame update
     void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -18,7 +20,7 @@ public class Player : MonoBehaviour
     {
         // if left click
         if (Input.GetMouseButtonDown(0)) // 0 - left, 1 - right, 2 - scroll view
-        {
+        {  
             // case a ray from mouse position
             Ray rayOrigin = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hitInfo;
@@ -27,6 +29,7 @@ public class Player : MonoBehaviour
             {
                 // set the position of the Player
                 _agent.SetDestination(hitInfo.point);
+                _animator.SetBool("Walk", true);
             }
             
         }
