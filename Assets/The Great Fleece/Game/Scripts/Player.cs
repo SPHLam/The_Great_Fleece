@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Player : MonoBehaviour
 {
+    private NavMeshAgent _agent;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -22,12 +25,10 @@ public class Player : MonoBehaviour
             
             if(Physics.Raycast(rayOrigin, out hitInfo))
             {
-                // debug the floor position hit
-                Debug.Log("Hit: " + hitInfo.point);
+                // set the position of the Player
+                _agent.SetDestination(hitInfo.point);
             }
-            // create object at floor position
-            GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            capsule.transform.position = hitInfo.point;
+            
         }
 
     }
