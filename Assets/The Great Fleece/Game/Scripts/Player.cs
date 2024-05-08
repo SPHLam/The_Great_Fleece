@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,6 +8,7 @@ public class Player : MonoBehaviour
 {
     private NavMeshAgent _agent;
     private Animator _animator;
+    private Vector3 _targetDestination;
 
     // Start is called before the first frame update
     void Start()
@@ -25,13 +27,21 @@ public class Player : MonoBehaviour
             Ray rayOrigin = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hitInfo;
             
-            if(Physics.Raycast(rayOrigin, out hitInfo))
+            if (Physics.Raycast(rayOrigin, out hitInfo))
             {
                 // set the position of the Player
                 _agent.SetDestination(hitInfo.point);
+                _targetDestination = hitInfo.point;
                 _animator.SetBool("Walk", true);
             }
             
+        }
+        // check if the distance between player and target destination == 0
+        // stop walking, back to idle
+
+        if (Vector3.Distance(transform.position, _targetDestination) < 1f)
+        {
+            _animator.SetBool("Walk", false);
         }
 
     }
