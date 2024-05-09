@@ -11,6 +11,7 @@ public class GuardAI : MonoBehaviour
     private int currentWaypoint = 0;
     private bool _reverseLane = false;
     private bool _targetReach = false; // Halt the Update method
+    private bool _idle = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,14 +40,28 @@ public class GuardAI : MonoBehaviour
                 {
                     _reverseLane = true;
                 }
-                StartCoroutine(WaitBeforeMoving());
+
+                _idle = (currentWaypoint == 0 || currentWaypoint == wayPoints.Count - 1) ? true : false;
+                
+                if (_idle)
+                {
+                    StartCoroutine(WaitBeforeMoving());
+                }
+                else
+                {
+                    MoveToTheNextWayPoint();
+                }
             }
         }
     }
     private IEnumerator WaitBeforeMoving()
     {
-        Debug.Log("WaitBeforeMoving()");
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(Random.Range(3f, 5f));
+        MoveToTheNextWayPoint();
+    }
+
+    private void MoveToTheNextWayPoint()
+    {
         // Implementing the route
         if (!_reverseLane)
         {
