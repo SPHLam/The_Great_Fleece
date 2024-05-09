@@ -10,6 +10,7 @@ public class GuardAI : MonoBehaviour
     private NavMeshAgent _agent;
     private int currentWaypoint = 0;
     private bool _reverseLane = false;
+    private bool _targetReach = false; // Halt the Update method
     // Start is called before the first frame update
     void Start()
     {
@@ -26,8 +27,10 @@ public class GuardAI : MonoBehaviour
     {
         if (wayPoints.Count > 0 && currentTarget != null)
         {
-            if (Vector3.Distance(transform.position, currentTarget.position) < 1f)
+            if (Vector3.Distance(transform.position, currentTarget.position) < 1f && _targetReach == false)
             {
+                _targetReach = true;
+                // Checking the route
                 if (currentWaypoint == 0)
                 {
                     _reverseLane = false;
@@ -36,27 +39,33 @@ public class GuardAI : MonoBehaviour
                 {
                     _reverseLane = true;
                 }
-
-                if (!_reverseLane)
-                {
-                    ++currentWaypoint;
-                    if (wayPoints[currentWaypoint] != null)
-                    {
-                        currentTarget = wayPoints[currentWaypoint];
-                        _agent.SetDestination(currentTarget.position);
-                    }
-                }
-                else
-                {
-                    --currentWaypoint;
-                    if (wayPoints[currentWaypoint] != null)
-                    {
-                        currentTarget = wayPoints[currentWaypoint];
-                        _agent.SetDestination(currentTarget.position);
-                    }
-                }
-
+                StartCoroutine(WaitBeforeMoving());
             }
         }
+    }
+    private IEnumerator WaitBeforeMoving()
+    {
+        Debug.Log("WaitBeforeMoving()");
+        yield return new WaitForSeconds(3f);
+        // Implementing the route
+        if (!_reverseLane)
+        {
+            ++currentWaypoint;
+            if (wayPoints[currentWaypoint] != null)
+            {
+                currentTarget = wayPoints[currentWaypoint];
+                _agent.SetDestination(currentTarget.position);
+            }
+        }
+        else
+        {
+            --currentWaypoint;
+            if (wayPoints[currentWaypoint] != null)
+            {
+                currentTarget = wayPoints[currentWaypoint];
+                _agent.SetDestination(currentTarget.position);
+            }
+        }
+        _targetReach = false;
     }
 }
