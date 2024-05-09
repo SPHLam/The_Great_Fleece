@@ -12,6 +12,7 @@ public class GuardAI : MonoBehaviour
     private bool _reverseLane = false;
     private bool _targetReach = false; // Halt the Update method
     private bool _idle = false;
+    private Animator _animator;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,6 +22,7 @@ public class GuardAI : MonoBehaviour
             currentTarget = wayPoints[0];
             _agent.SetDestination(currentTarget.position);
         }
+        _animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -56,12 +58,14 @@ public class GuardAI : MonoBehaviour
     }
     private IEnumerator WaitBeforeMoving()
     {
+        _animator.SetBool("Walk", false);
         yield return new WaitForSeconds(Random.Range(3f, 5f));
         MoveToTheNextWayPoint();
     }
 
     private void MoveToTheNextWayPoint()
     {
+        _animator.SetBool("Walk", true);
         // Implementing the route
         if (!_reverseLane)
         {
