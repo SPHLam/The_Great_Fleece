@@ -30,28 +30,35 @@ public class GuardAI : MonoBehaviour
     {
         if (wayPoints.Count > 0 && currentTarget != null)
         {
-            if (Vector3.Distance(transform.position, currentTarget.position) < 1f && _targetReach == false)
+            if (wayPoints.Count == 1)
             {
-                _targetReach = true;
-                // Checking the route
-                if (currentWaypoint == 0)
+                _animator.SetBool("Walk", false);
+            }
+            else
+            {
+                if (Vector3.Distance(transform.position, currentTarget.position) < 1f && _targetReach == false)
                 {
-                    _reverseLane = false;
-                }
-                else if (currentWaypoint == wayPoints.Count - 1)
-                {
-                    _reverseLane = true;
-                }
+                    _targetReach = true;
+                    // Checking the route
+                    if (currentWaypoint == 0)
+                    {
+                        _reverseLane = false;
+                    }
+                    else if (currentWaypoint == wayPoints.Count - 1)
+                    {
+                        _reverseLane = true;
+                    }
 
-                _idle = (currentWaypoint == 0 || currentWaypoint == wayPoints.Count - 1) ? true : false;
-                
-                if (_idle)
-                {
-                    StartCoroutine(WaitBeforeMoving());
-                }
-                else
-                {
-                    MoveToTheNextWayPoint();
+                    _idle = (currentWaypoint == 0 || currentWaypoint == wayPoints.Count - 1) ? true : false;
+
+                    if (_idle)
+                    {
+                        StartCoroutine(WaitBeforeMoving());
+                    }
+                    else
+                    {
+                        MoveToTheNextWayPoint();
+                    }
                 }
             }
         }
