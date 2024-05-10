@@ -13,6 +13,8 @@ public class GuardAI : MonoBehaviour
     private bool _targetReach = false; // Halt the Update method
     private bool _idle = false;
     private Animator _animator;
+    private bool _coinTossed = false;
+    private Vector3 _coinPos;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,38 +30,48 @@ public class GuardAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (wayPoints.Count > 0 && currentTarget != null)
+        if (!_coinTossed)
         {
-            if (wayPoints.Count == 1)
+            if (wayPoints.Count > 0 && currentTarget != null)
             {
-                _animator.SetBool("Walk", false);
-            }
-            else
-            {
-                if (Vector3.Distance(transform.position, currentTarget.position) < 1f && _targetReach == false)
+                if (wayPoints.Count == 1)
                 {
-                    _targetReach = true;
-                    // Checking the route
-                    if (currentWaypoint == 0)
+                    _animator.SetBool("Walk", false);
+                }
+                else
+                {
+                    if (Vector3.Distance(transform.position, currentTarget.position) < 1f && _targetReach == false)
                     {
-                        _reverseLane = false;
-                    }
-                    else if (currentWaypoint == wayPoints.Count - 1)
-                    {
-                        _reverseLane = true;
-                    }
+                        _targetReach = true;
+                        // Checking the route
+                        if (currentWaypoint == 0)
+                        {
+                            _reverseLane = false;
+                        }
+                        else if (currentWaypoint == wayPoints.Count - 1)
+                        {
+                            _reverseLane = true;
+                        }
 
-                    _idle = (currentWaypoint == 0 || currentWaypoint == wayPoints.Count - 1) ? true : false;
+                        _idle = (currentWaypoint == 0 || currentWaypoint == wayPoints.Count - 1) ? true : false;
 
-                    if (_idle)
-                    {
-                        StartCoroutine(WaitBeforeMoving());
-                    }
-                    else
-                    {
-                        MoveToTheNextWayPoint();
+                        if (_idle)
+                        {
+                            StartCoroutine(WaitBeforeMoving());
+                        }
+                        else
+                        {
+                            MoveToTheNextWayPoint();
+                        }
                     }
                 }
+            }
+        }   
+        else
+        {
+            if (Vector3.Distance(transform.position, _coinPos) < 4f)
+            {
+                _animator.SetBool("Walk", false);
             }
         }
     }
@@ -93,5 +105,15 @@ public class GuardAI : MonoBehaviour
             }
         }
         _targetReach = false;
+    }
+
+    public void moveToCoinPosition(Vector3 coinPos)
+    {
+        _coinPos = coinPos;
+        _agent.SetDestination(coinPos);
+    }
+    public void coinIsTossed()
+    {
+        _coinTossed = true;
     }
 }
