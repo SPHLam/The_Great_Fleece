@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
         {
             if(!_coinTossed)
             {
+                _animator.SetTrigger("Throw");
                 Ray rayOrigin = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
 
